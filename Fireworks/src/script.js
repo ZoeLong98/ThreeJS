@@ -123,14 +123,11 @@ document.addEventListener("keydown", (e) => {
 
 // 播放烟花爆炸音效
 const playFireworkSound = () => {
-  if (backgroundMusic.paused) return; // 如果背景音乐未播放，则不播放烟花音效
-
   setTimeout(() => {
-    // 找到一个空闲的音频实例
+    if (backgroundMusic.paused) return;
     const availableAudio = audioPool.find(
       (audio) => audio.paused || audio.ended
     );
-
     if (availableAudio) {
       availableAudio.currentTime = 0;
       availableAudio.play().catch(() => {
