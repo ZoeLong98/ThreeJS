@@ -37,6 +37,21 @@ musicToggle.addEventListener("click", () => {
   }
 });
 
+// 为音乐按钮添加触摸事件支持
+musicToggle.addEventListener("touchend", (event) => {
+  event.stopPropagation(); // 阻止事件冒泡
+  event.preventDefault(); // 阻止默认行为
+  if (isMusicPlaying) {
+    backgroundMusic.pause();
+    musicToggle.src = "./volume-off.svg";
+    isMusicPlaying = false;
+  } else {
+    backgroundMusic.play();
+    musicToggle.src = "./volume-on.svg";
+    isMusicPlaying = true;
+  }
+});
+
 backgroundMusic.volume = 1.0;
 
 // 视频控制功能
@@ -64,6 +79,19 @@ videoToggle.addEventListener("click", () => {
   });
 });
 
+// 为视频按钮添加触摸事件支持
+videoToggle.addEventListener("touchend", (event) => {
+  event.stopPropagation(); // 阻止事件冒泡
+  event.preventDefault(); // 阻止默认行为
+  console.log("视频按钮被触摸");
+  videoOverlay.classList.add("show");
+  console.log("视频浮窗应该显示了");
+
+  fireworkVideo.play().catch((error) => {
+    console.error("视频播放失败:", error);
+  });
+});
+
 // 关闭视频浮窗
 const closeVideoOverlay = () => {
   videoOverlay.classList.remove("show");
@@ -74,6 +102,14 @@ const closeVideoOverlay = () => {
 // 点击浮窗背景也可以关闭
 videoOverlay.addEventListener("click", (e) => {
   if (e.target === videoOverlay) {
+    closeVideoOverlay();
+  }
+});
+
+// 为视频浮窗添加触摸关闭支持
+videoOverlay.addEventListener("touchend", (e) => {
+  if (e.target === videoOverlay) {
+    e.preventDefault();
     closeVideoOverlay();
   }
 });
@@ -359,8 +395,52 @@ const createRandomFirework = () => {
 };
 
 window.addEventListener("click", (event) => {
+  // 检查点击是否在按钮区域
+  if (
+    event.target.closest(".audio-btn") ||
+    event.target.closest(".video-btn") ||
+    event.target.closest(".video-overlay")
+  ) {
+    return; // 如果点击的是按钮，不触发烟花
+  }
   createRandomFirework();
 });
+
+// 专门为微信浏览器添加触摸事件
+document.addEventListener(
+  "touchend",
+  (event) => {
+    // 检查触摸是否在按钮区域
+    if (
+      event.target.closest(".audio-btn") ||
+      event.target.closest(".video-btn") ||
+      event.target.closest(".video-overlay")
+    ) {
+      return; // 如果触摸的是按钮，不阻止默认行为，让按钮正常工作
+    }
+    // 阻止默认的点击事件，避免双重触发
+    event.preventDefault();
+    createRandomFirework();
+  },
+  { passive: false }
+);
+
+// 额外的触摸开始事件，某些情况下微信只响应这个
+document.addEventListener(
+  "touchstart",
+  (event) => {
+    // 检查触摸是否在按钮区域
+    if (
+      event.target.closest(".audio-btn") ||
+      event.target.closest(".video-btn") ||
+      event.target.closest(".video-overlay")
+    ) {
+      return; // 如果触摸的是按钮，不阻止默认行为
+    }
+    event.preventDefault();
+  },
+  { passive: false }
+);
 
 /**
  * Animate

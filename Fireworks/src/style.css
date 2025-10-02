@@ -9,10 +9,15 @@ body {
 }
 
 .webgl {
+  position: fixed;
   top: 0;
   left: 0;
+  width: 100vw;
+  height: 100vh;
   outline: none;
-  z-index: 100;
+  z-index: 10;
+  touch-action: none;
+  pointer-events: auto;
 }
 
 /* 简化的音频按钮样式 */
@@ -28,7 +33,9 @@ body {
   border-radius: 50%;
   cursor: pointer;
   font-size: 20px;
-  z-index: 1000;
+  z-index: 15;
+  pointer-events: auto;
+  touch-action: manipulation;
 }
 
 .audio-btn:hover {
@@ -47,8 +54,10 @@ body {
   height: 50px;
   cursor: pointer;
   font-size: 20px;
-  z-index: 1;
+  z-index: 15;
   transition: all 0.3s ease;
+  pointer-events: auto;
+  touch-action: manipulation;
 }
 
 .video-btn:hover {
