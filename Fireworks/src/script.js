@@ -21,7 +21,7 @@ const maxAudioInstances = 10; // 最多同时播放10个音效
 // 初始化音频池
 for (let i = 0; i < maxAudioInstances; i++) {
   const audio = new Audio("./firework.wav");
-  audio.volume = 0.3;
+  audio.volume = 0.5;
   audioPool.push(audio);
 }
 
@@ -37,7 +37,7 @@ musicToggle.addEventListener("click", () => {
   }
 });
 
-backgroundMusic.volume = 0.5;
+backgroundMusic.volume = 1.0;
 
 // 视频控制功能
 const videoToggle = document.getElementById("videoToggle");
@@ -101,7 +101,7 @@ const playFireworkSound = () => {
         // 忽略播放失败的情况
       });
     }
-  }, 1800); // 延迟2.2秒（2200毫秒）
+  }, 2100);
 };
 
 /**
