@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fireworks</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- 简化的音频控制 -->
+    <audio id="backgroundMusic" loop>
+      <source src="./cicadas.wav" type="audio/wav" />
+    </audio>
+
+    <!-- 烟花爆炸音效 -->
+    <audio id="fireworkSound">
+      <source src="./firework.wav" type="audio/wav" />
+    </audio>
+
+    <!-- 音乐控制按钮 -->
+    <button class="audio-btn">
+      <img id="musicToggle" src="./volume-off.svg" alt="Toggle Music" />
+    </button>
+
+    <!-- 视频控制按钮 -->
+    <button class="video-btn" id="videoToggle">Inspired By</button>
+
+    <!-- 视频浮窗 -->
+    <div class="video-overlay" id="videoOverlay">
+      <div class="video-container">
+        <video id="fireworkVideo" controls preload="metadata">
+          <source src="./firework.MOV" type="video/mp4" />
+          <p>您的浏览器不支持视频播放。</p>
+        </video>
+      </div>
+    </div>
+
+    <!-- 底部提示文字 -->
+    <div class="instructions">
+      Click to create fireworks
+      <br />Drag to rotate up/down
+    </div>
+
+    <canvas class="webgl"></canvas>
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>
