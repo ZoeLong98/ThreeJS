@@ -98,12 +98,16 @@ const cameraControls = {
 };
 
 // 鼠标滚轮控制
-window.addEventListener("wheel", (event) => {
-  event.preventDefault();
-  // 标准化滚轮值，不同浏览器和设备的滚轮值可能不同
-  const delta = Math.sign(event.deltaY) * 0.2;
-  cameraControls.moveCamera(delta);
-});
+window.addEventListener(
+  "wheel",
+  (event) => {
+    event.preventDefault();
+    // 标准化滚轮值，不同浏览器和设备的滚轮值可能不同
+    const delta = Math.sign(event.deltaY) * 0.2;
+    cameraControls.moveCamera(delta);
+  },
+  { passive: false }
+); // 明确设置为非被动模式
 
 // 键盘控制
 window.addEventListener("keydown", (event) => {
@@ -131,15 +135,19 @@ window.addEventListener("touchstart", (event) => {
   }
 });
 
-window.addEventListener("touchmove", (event) => {
-  if (event.touches.length === 1 && touchStartY !== null) {
-    event.preventDefault();
-    const touchY = event.touches[0].clientY;
-    const deltaY = (-touchY + touchStartY) * touchMoveSpeed;
-    cameraControls.moveCamera(deltaY);
-    touchStartY = touchY;
-  }
-});
+window.addEventListener(
+  "touchmove",
+  (event) => {
+    if (event.touches.length === 1 && touchStartY !== null) {
+      event.preventDefault();
+      const touchY = event.touches[0].clientY;
+      const deltaY = (-touchY + touchStartY) * touchMoveSpeed;
+      cameraControls.moveCamera(deltaY);
+      touchStartY = touchY;
+    }
+  },
+  { passive: false }
+); // 明确设置为非被动模式
 
 window.addEventListener("touchend", () => {
   touchStartY = null;
