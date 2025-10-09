@@ -120,187 +120,174 @@ particles.normals = [
 particles.colorA = "#fdf5a0";
 particles.colorB = "#29a6ff";
 
-const { positions, boundingBox } = await loadModels(models);
-particles.boundingBox = boundingBox;
+// 使用异步方式加载模型
+loadModels(models).then(({ positions, boundingBox }) => {
+  particles.boundingBox = boundingBox;
 
-particles.maxCount = 0;
-for (const position of positions) {
-  if (position.count > particles.maxCount) particles.maxCount = position.count;
-}
-
-// 计算每个模型的相机位置信息
-particles.cameraInfo = [];
-for (let i = 0; i < particles.boundingBox.length; i++) {
-  const box = particles.boundingBox[i];
-  const modelName = models[i].split("/").pop().split(".")[0];
-
-  if (box) {
-    // 获取bounding box的中心和尺寸
-    const center = new THREE.Vector3();
-    box.getCenter(center);
-    const size = new THREE.Vector3();
-    box.getSize(size);
-
-    // 找到最长的边
-    const maxDimension = Math.max(size.x, size.y, size.z);
-
-    // 计算相机距离，确保最长边能完全显示在屏幕中央
-    const fov = camera.fov * (Math.PI / 180); // 转换为弧度
-    const distance = (maxDimension / (2 * Math.tan(fov / 2))) * 1.2; // 1.2为安全边距
-
-    particles.cameraInfo.push({
-      center: center,
-      size: size,
-      maxDimension: maxDimension,
-      optimalDistance: Math.max(distance, 2), // 最小距离为2
-      modelName: modelName,
-    });
-  } else {
-    console.warn(`Model ${i} (${modelName}) has no bounding box!`);
+  particles.maxCount = 0;
+  for (const position of positions) {
+    if (position.count > particles.maxCount)
+      particles.maxCount = position.count;
   }
-}
 
-// 相机聚焦功能
-particles.focusOnModel = (index, duration = 2) => {
-  if (index < 0 || index >= particles.cameraInfo.length) return;
+  // 计算每个模型的相机位置信息
+  particles.cameraInfo = [];
+  for (let i = 0; i < particles.boundingBox.length; i++) {
+    const box = particles.boundingBox[i];
+    const modelName = models[i].split("/").pop().split(".")[0];
 
-  const info = particles.cameraInfo[index];
+    if (box) {
+      // 获取bounding box的中心和尺寸
+      const center = new THREE.Vector3();
+      box.getCenter(center);
+      const size = new THREE.Vector3();
+      box.getSize(size);
 
-  // 计算相机位置 - 在模型前方
-  const direction = new THREE.Vector3(
-    particles.normals[index][0],
-    particles.normals[index][1],
-    particles.normals[index][2]
-  );
-  const targetPosition = info.center
-    .clone()
-    .add(direction.multiplyScalar(info.optimalDistance));
+      // 找到最长的边
+      const maxDimension = Math.max(size.x, size.y, size.z);
 
-  // 动画移动相机
-  gsap.to(camera.position, {
-    x: targetPosition.x,
-    y: targetPosition.y,
-    z: targetPosition.z,
-    duration: duration,
-    ease: "power2.inOut",
-  });
+      // 计算相机距离，确保最长边能完全显示在屏幕中央
+      const fov = camera.fov * (Math.PI / 180); // 转换为弧度
+      const distance = (maxDimension / (2 * Math.tan(fov / 2))) * 1.2; // 1.2为安全边距
 
-  // 动画移动控制器目标（相机看向的点）
-  gsap.to(controls.target, {
-    x: info.center.x,
-    y: info.center.y,
-    z: info.center.z,
-    duration: duration,
-    ease: "power2.inOut",
-  });
-};
-
-particles.positions = [];
-for (const position of positions) {
-  const originalArray = position.array;
-  const newArray = new Float32Array(particles.maxCount * 3);
-  for (let i = 0; i < particles.maxCount; i++) {
-    const i3 = i * 3;
-
-    if (i3 < originalArray.length) {
-      newArray[i3 + 0] = originalArray[i3 + 0];
-      newArray[i3 + 1] = originalArray[i3 + 1];
-      newArray[i3 + 2] = originalArray[i3 + 2];
+      particles.cameraInfo.push({
+        center: center,
+        size: size,
+        maxDimension: maxDimension,
+        optimalDistance: Math.max(distance, 2), // 最小距离为2
+        modelName: modelName,
+      });
     } else {
-      const randomIndex = Math.floor(position.count * Math.random()) * 3;
-      newArray[i3 + 0] = originalArray[randomIndex + 0];
-      newArray[i3 + 1] = originalArray[randomIndex + 1];
-      newArray[i3 + 2] = originalArray[randomIndex + 2];
+      console.warn(`Model ${i} (${modelName}) has no bounding box!`);
     }
   }
-  //   tell the GPU to take this array three by three
-  particles.positions.push(new THREE.Float32BufferAttribute(newArray, 3));
-}
 
-// Geometry
-const sizesArray = new Float32Array(particles.maxCount);
-for (let i = 0; i < particles.maxCount; i++)
-  sizesArray[i] = Math.random() * 1.5;
-particles.geometry = new THREE.BufferGeometry();
-particles.geometry.setAttribute(
-  "position",
-  particles.positions[particles.index] // 默认显示第一个模型
-);
-particles.geometry.setAttribute(
-  "aTargetPosition",
-  particles.positions[Math.min(particles.index + 1, models.length - 1)]
-);
-particles.geometry.setAttribute(
-  "aSize",
-  new THREE.BufferAttribute(sizesArray, 1)
-);
+  // 相机聚焦功能
+  particles.focusOnModel = (index, duration = 2) => {
+    if (index < 0 || index >= particles.cameraInfo.length) return;
 
-particles.geometry.setIndex(null); // 非索引缓冲几何体
+    const info = particles.cameraInfo[index];
 
-particles.material = new THREE.ShaderMaterial({
-  vertexShader: particlesVertexShader,
-  fragmentShader: particlesFragmentShader,
-  uniforms: {
-    uSize: new THREE.Uniform(0.05),
-    uResolution: new THREE.Uniform(
-      new THREE.Vector2(
-        sizes.width * sizes.pixelRatio,
-        sizes.height * sizes.pixelRatio
-      )
-    ),
-    uProgress: new THREE.Uniform(0.0),
-    uColorA: new THREE.Uniform(new THREE.Color(particles.colorA)),
-    uColorB: new THREE.Uniform(new THREE.Color(particles.colorB)),
-  },
-  blending: THREE.AdditiveBlending,
-  depthWrite: false,
+    // 计算相机位置 - 在模型前方
+    const direction = new THREE.Vector3(
+      particles.normals[index][0],
+      particles.normals[index][1],
+      particles.normals[index][2]
+    );
+    const targetPosition = info.center
+      .clone()
+      .add(direction.multiplyScalar(info.optimalDistance));
+
+    // 动画移动相机
+    gsap.to(camera.position, {
+      x: targetPosition.x,
+      y: targetPosition.y,
+      z: targetPosition.z,
+      duration: duration,
+      ease: "power2.inOut",
+    });
+
+    // 动画移动控制器目标（相机看向的点）
+    gsap.to(controls.target, {
+      x: info.center.x,
+      y: info.center.y,
+      z: info.center.z,
+      duration: duration,
+      ease: "power2.inOut",
+    });
+  };
+
+  particles.positions = [];
+  for (const position of positions) {
+    const originalArray = position.array;
+    const newArray = new Float32Array(particles.maxCount * 3);
+    for (let i = 0; i < particles.maxCount; i++) {
+      const i3 = i * 3;
+
+      if (i3 < originalArray.length) {
+        newArray[i3 + 0] = originalArray[i3 + 0];
+        newArray[i3 + 1] = originalArray[i3 + 1];
+        newArray[i3 + 2] = originalArray[i3 + 2];
+      } else {
+        const randomIndex = Math.floor(position.count * Math.random()) * 3;
+        newArray[i3 + 0] = originalArray[randomIndex + 0];
+        newArray[i3 + 1] = originalArray[randomIndex + 1];
+        newArray[i3 + 2] = originalArray[randomIndex + 2];
+      }
+    }
+    //   tell the GPU to take this array three by three
+    particles.positions.push(new THREE.Float32BufferAttribute(newArray, 3));
+  }
+
+  // Geometry
+  const sizesArray = new Float32Array(particles.maxCount);
+  for (let i = 0; i < particles.maxCount; i++)
+    sizesArray[i] = Math.random() * 1.5;
+  particles.geometry = new THREE.BufferGeometry();
+  particles.geometry.setAttribute(
+    "position",
+    particles.positions[particles.index] // 默认显示第一个模型
+  );
+  particles.geometry.setAttribute(
+    "aTargetPosition",
+    particles.positions[Math.min(particles.index + 1, models.length - 1)]
+  );
+  particles.geometry.setAttribute(
+    "aSize",
+    new THREE.BufferAttribute(sizesArray, 1)
+  );
+
+  particles.geometry.setIndex(null); // 非索引缓冲几何体
+
+  particles.material = new THREE.ShaderMaterial({
+    vertexShader: particlesVertexShader,
+    fragmentShader: particlesFragmentShader,
+    uniforms: {
+      uSize: new THREE.Uniform(0.05),
+      uResolution: new THREE.Uniform(
+        new THREE.Vector2(
+          sizes.width * sizes.pixelRatio,
+          sizes.height * sizes.pixelRatio
+        )
+      ),
+      uProgress: new THREE.Uniform(0.0),
+      uColorA: new THREE.Uniform(new THREE.Color(particles.colorA)),
+      uColorB: new THREE.Uniform(new THREE.Color(particles.colorB)),
+    },
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+
+  // Points
+  particles.points = new THREE.Points(particles.geometry, particles.material);
+  particles.points.frustumCulled = false;
+  scene.add(particles.points);
+
+  // 初始化滚动控制 - 移到模型加载完成后
+  const { updateScrollValue } = initScrollControl({
+    scrollControl,
+    particles,
+    camera,
+    controls,
+    models,
+  });
+
+  // 启动动画循环 - 移到模型加载完成后
+  const tick = () => {
+    // Update scroll value
+    updateScrollValue();
+
+    // Update controls
+    controls.update();
+
+    // Render normal scene
+    renderer.render(scene, camera);
+
+    // Call tick again on the next frame
+    window.requestAnimationFrame(tick);
+  };
+
+  tick();
 });
 
-// Points
-particles.points = new THREE.Points(particles.geometry, particles.material);
-particles.points.frustumCulled = false;
-scene.add(particles.points);
-
-// // Tweaks
-// gui
-//   .add(particles.material.uniforms.uProgress, "value")
-//   .min(0)
-//   .max(1)
-//   .step(0.01)
-//   .name("progress")
-//   .listen();
-
-// gui.addColor(particles, "colorA").onChange(() => {
-//   particles.material.uniforms.uColorA.value.set(particles.colorA);
-// });
-// gui.addColor(particles, "colorB").onChange(() => {
-//   particles.material.uniforms.uColorB.value.set(particles.colorB);
-// });
-// gui.add(particles.material.uniforms.uSize, "value").min(0).max(0.3).step(0.01);
-
-// 初始化滚动控制
-const { updateScrollValue } = initScrollControl({
-  scrollControl,
-  particles,
-  camera,
-  controls,
-  models,
-});
-/**
- * Animate
- */
-const tick = () => {
-  // Update scroll value
-  updateScrollValue();
-
-  // Update controls
-  controls.update();
-
-  // Render normal scene
-  renderer.render(scene, camera);
-
-  // Call tick again on the next frame
-  window.requestAnimationFrame(tick);
-};
-
-tick();
+// 移除原来的同步代码
