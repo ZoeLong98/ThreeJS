@@ -1,0 +1,148 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  overflow: hidden;
+}
+
+/* Loading Screen */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #160920, #2a1b3d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loading-content {
+  text-align: center;
+  color: white;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  font-size: 18px;
+  margin-bottom: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.loading-progress {
+  width: 200px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  margin: 0 auto 10px;
+  overflow: hidden;
+}
+
+.loading-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff88, #00ccff);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.loading-percentage {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  outline: none;
+}
+
+img {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgb(4, 60, 92);
+  z-index: 10;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+img:hover {
+  transform: scale(1.1);
+}
+
+.project-summary {
+  position: fixed;
+  top: 10px;
+  left: 5px;
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+
+.project-summary.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.project-summary ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+/* Instructions */
+.instructions {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  padding: 10px 15px;
+  max-width: 70vw;
+  z-index: 10;
+}
+
+.footer {
+  color: #666;
+  font-size: small;
+  margin-top: 10px;
+}

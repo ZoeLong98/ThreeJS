@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Particles Morphing</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+      <div class="loading-content">
+        <p class="loading-text">Loading...</p>
+        <div class="loading-progress">
+          <div class="loading-bar" id="loading-bar"></div>
+        </div>
+        <span class="loading-percentage" id="loading-percentage">0%</span>
+      </div>
+    </div>
+
+    <img src="./notebook.svg" alt="" id="notebook-icon" />
+    <div class="project-summary" id="project-summary">
+      <h2>Project Summary</h2>
+      <ul>
+        <li>
+          1. Particle Text: The text models are created in Blender, and their
+          vertex positions are exported. <code>THREE.Points</code> is used to
+          generate the particles in Three.js.
+        </li>
+        <li>
+          2. Particle Morphing: The morphing animation is achieved using shaders
+          to interpolate between different particle states. Based on a noise
+          function, vertices start and end at different times, which is also
+          used on vertex colors.
+        </li>
+        <li>
+          3. Camera Control: The camera behavior is implemented in JS by
+          recording the current and next model indices, morphing progress, model
+          centers, and model normals.
+        </li>
+      </ul>
+
+      <p class="footer">
+        This project is based on the Three.js Journey Particles Morphing Shader
+        course
+      </p>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions">
+      Scroll to see more<br />rotate your phone if needed
+    </div>
+    <canvas class="webgl"></canvas>
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>
