@@ -1,0 +1,86 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  overflow: hidden;
+  background-color: rgb(0, 0, 0);
+}
+.dg,
+.lil-gui {
+  z-index: 9999 !important;
+}
+
+.landing-container-scroll {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  height: 100vh;
+  width: 100vw;
+  align-items: center;
+  justify-items: center;
+  gap: 8px;
+  z-index: 15;
+}
+
+.title-grid-cell {
+  color: #fff;
+  font-size: clamp(2rem, 10vw, 12rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  outline: none;
+  z-index: 10;
+}
+
+.catalog {
+  position: fixed; /* 或 absolute */
+  top: 0;
+  left: 0;
+  z-index: 30;
+  color: rgb(202, 200, 200);
+}
+
+.catalog > div {
+  position: absolute;
+  opacity: 0;
+  white-space: nowrap;
+}
+.catalog > div:hover {
+  cursor: pointer;
+}
+
+#back {
+  color: white;
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 20;
+  cursor: pointer;
+}
+
+/* Line */
+svg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw; /* 或你想要的具体像素 */
+  height: 100vh;
+  z-index: 100;
+  color: white;
+}
+
+#label {
+  fill: white;
+  font-size: 3px; /* 用像素单位更直观 */
+  font-family: Arial, sans-serif;
+}

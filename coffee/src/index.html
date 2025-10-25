@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code structuring</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="landing-container-scroll">
+      <div class="title-grid-cell">C</div>
+      <div class="title-grid-cell">O</div>
+      <div class="title-grid-cell">F</div>
+      <div class="title-grid-cell">F</div>
+      <div class="title-grid-cell">E</div>
+      <div class="title-grid-cell">E</div>
+    </div>
+    <div class="catalog">
+      <div id="origin"><span>Origin</span> --------</div>
+      <div id="roasting">-------- Roasting</div>
+      <div id="brewing">Brewing --------</div>
+      <div id="milk">-------- Milk & Balance</div>
+    </div>
+    <div id="back">BACK</div>
+    <div id="line" style="display: none">
+      <svg viewBox="0 0 100 100" width="400" height="400">
+        <line
+          id="guide-line"
+          x1="50"
+          y1="50"
+          x2="50"
+          y2="50"
+          stroke="white"
+          stroke-width="0.1"
+          stroke-dasharray="36"
+          stroke-dashoffset="36"
+        />
+        <text id="label" x="85" y="35" opacity="0">Data Insight</text>
+      </svg>
+    </div>
+
+    <canvas class="webgl"></canvas>
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>
